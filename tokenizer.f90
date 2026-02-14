@@ -121,7 +121,7 @@ end function
 function merge_utf8_pairs(intokens) result(tokens)
 ! Merge all UTF-8 character pairs
 type(string), intent(in) :: intokens(:)
-type(string), allocatable :: tokens(:)
+type(string), allocatable :: tokens(:), tmp_tokens(:)
 integer :: i, j
 logical :: one_more_pass
 allocate(tokens(size(intokens)))
@@ -132,7 +132,9 @@ do while(one_more_pass)
     one_more_pass = .false.
     do i = j, size(tokens)-1
         if (len(tokens(i)%s) == 1 .and. iachar(tokens(i)%s(1:1)) >= 128) then
-            tokens = merge_pair(tokens, i)
+            tmp_tokens = merge_pair(tokens, i)
+            deallocate(tokens)
+            call move_alloc(tmp_tokens, tokens)
             one_more_pass = .true.
             j = i + 1
             exit
@@ -147,7 +149,7 @@ function bpe(token, vocab_idx, vocab_txt) result(tokens)
 character(*), intent(in) :: token
 integer, intent(in) :: vocab_idx(0:)
 character, intent(in) :: vocab_txt(:)
-type(string), allocatable :: tokens(:)
+type(string), allocatable :: tokens(:), tmp_tokens(:)
 integer, allocatable :: pair_scores(:)
 integer :: not_found, merge_pair_idx
 integer :: i
@@ -156,7 +158,9 @@ allocate(tokens(len(token)))
 do i = 1, len(token)
     tokens(i)%s = token(i:i)
 end do
-tokens = merge_utf8_pairs(tokens)
+tmp_tokens = merge_utf8_pairs(tokens)
+deallocate(tokens)
+call move_alloc(tmp_tokens, tokens)
 do
     !print *, "tokens = ", (tokens(i)%s // " ", i=1,size(tokens))
     if (size(tokens) == 1) then
@@ -177,7 +181,9 @@ do
     end if
     !print *, pair_scores
     !print *, merge_pair_idx, pair_scores(merge_pair_idx)
-    tokens = merge_pair(tokens, merge_pair_idx)
+    tmp_tokens = merge_pair(tokens, merge_pair_idx)
+    deallocate(tokens)
+    call move_alloc(tmp_tokens, tokens)
     deallocate(pair_scores)
 end do
 !print *, "final tokens = ", (tokens(i)%s // " ", i=1,size(tokens))
@@ -208,6 +214,7 @@ do
         ! either one or two bytes of UTF-8 are appended to tmp2:
         call codepoint_to_utf8(tmp2, c)
     end do
+    if (allocated(bpe_tokens)) deallocate(bpe_tokens)
     bpe_tokens = bpe(tmp2, vocab_idx, vocab_txt)
     do j = 1, size(bpe_tokens)
         n_tokens = n_tokens + 1
