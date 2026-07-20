@@ -220,8 +220,24 @@ def load_decoder(filename):
         i += 1
     return decoder
 
+import codecs
+
+# 1. Define the custom error handler function
+def log_and_escape_handler(exception):
+    # e.start gives the exact byte position of the error
+    print(f"⚠️ Escape occurring at byte position: {exception.start}")
+    
+    # Apply backslashreplace logic to the bad bytes and resume
+    bad_bytes = exception.object[exception.start:exception.end]
+    escaped_text = bad_bytes.decode('ascii', errors='backslashreplace')
+    
+    return (escaped_text, exception.end)
+
+# 2. Register it with Python's codec system under a custom name
+codecs.register_error("print_and_escape", log_and_escape_handler)
+
 def load_vocab(filename):
-    D = open(filename).read()
+    D = open(filename, encoding='utf8', errors="print_and_escape").read()
     D = D.split("\n")
     D = D[1:]
     return D
