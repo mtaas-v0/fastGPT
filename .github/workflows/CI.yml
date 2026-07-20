@@ -43,7 +43,13 @@ jobs:
         with:
           environment-name: tf_env
           create-args: python=3.10 m2w64-gcc-fortran
-      
+
+      - name: Check where is my compiler
+        shell: bash -l {0}
+        run: |
+          echo FC is: $FC
+          exit -1
+          
       # Step running exclusively on Windows platforms to map wheels correctly via PyPI
       - name: Install TensorFlow via Pip on Windows Runners
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
