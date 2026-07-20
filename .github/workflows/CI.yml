@@ -106,6 +106,14 @@ jobs:
         run: |
             ci/build.sh
 
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: built-directory
+          path: .
+          retention-days: 1
+
   lfortran:
     name: LFortran (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
