@@ -120,9 +120,10 @@ jobs:
           
           echo "Conda active prefix is: $CONDA_PREFIX"
           echo "Scanning for needed toolchain DLLs..."
+          objdump -p chat.exe
           
           # Use objdump (packaged with m2w64-toolchain) to find import requirements
-          objdump -p dist/chat.exe | grep -i 'DLL Name:' | awk '{print $3}' | while read -r dll; do
+          objdump -p chat.exe | grep -i 'DLL Name:' | awk '{print $3}' | while read -r dll; do
             if [ -f "$DLL_SRC_DIR/$dll" ]; then
               cp "$DLL_SRC_DIR/$dll" dist/
               echo "Successfully Bundled: $dll"
