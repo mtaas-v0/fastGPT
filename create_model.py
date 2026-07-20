@@ -204,7 +204,7 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
     print("offset offset:", offset_offset)
     print("data offset:", data_offset)
 
-    g_writer = gguf.GGUFWriter("model.gguf", "generic")
+    g_writer = gguf.GGUFWriter("model_v2.gguf", "generic")
     save_gguf(g_writer, data_offset_name, data_offset)
     g_writer.close()
     
