@@ -2,7 +2,8 @@
 
 set -ex
 
-cmake .
+echo at build.sh FC is $FC
+cmake .  -D CMAKE_Fortran_COMPILER=$FC
 make
 mkdir models
 python create_model.py --models_dir "models" --model_size "124M"
