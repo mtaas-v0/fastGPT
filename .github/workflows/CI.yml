@@ -45,13 +45,25 @@ jobs:
           create-args: python=3.10 m2w64-gcc-fortran
 
       # Explicit step that only triggers on Windows to append variables dynamically
-      - name: Configure Windows Fortran Variables
-        if: runner.os == 'Windows'
+      - name: Locate gfortran.exe and Set GITHUB_ENV
         shell: bash -l {0}
         run: |
-          echo "FC=${{ github.workspace }}/micromamba/envs/tf_env/Library/mingw-w64/bin/gfortran.exe" >> $GITHUB_ENV
-          echo "F77=${{ github.workspace }}/micromamba/envs/tf_env/Library/mingw-w64/bin/gfortran.exe" >> $GITHUB_ENV
-
+          echo "Searching for gfortran.exe inside ${{ github.workspace }}..."
+          
+          # Find the first instance of gfortran.exe recursively
+          GFORTRAN_PATH=$(find "${{ github.workspace }}" -type f -name "gfortran.exe" -print -quit)
+          
+          if [ -z "$GFORTRAN_PATH" ]; then
+            echo "::error::gfortran.exe was not found anywhere in the workspace directory!"
+            exit 1
+          fi
+          
+          echo "Found compiler at: $GFORTRAN_PATH"
+          
+          # Export to GITHUB_ENV for use in subsequent pipeline steps
+          echo "FC=$GFORTRAN_PATH" >> $GITHUB_ENV
+          echo "F77=$GFORTRAN_PATH" >> $GITHUB_ENV
+          
       - name: Next Workflow Task
         shell: bash -l {0}
         run: |
