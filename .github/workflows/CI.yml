@@ -42,7 +42,7 @@ jobs:
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
         with:
           environment-name: tf_env
-          create-args: python=3.10 tensorflow=2.11.0
+          create-args: python=3.* tensorflow=2.*
           
       - uses: mamba-org/setup-micromamba@v2.0.2
         if: matrix.os != 'windows-2022' && matrix.os != 'windows-11-arm'
