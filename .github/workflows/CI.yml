@@ -42,7 +42,14 @@ jobs:
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
         with:
           environment-name: tf_env
-          create-args: python=3.* tensorflow=2.*
+          create-args: python=3.10
+      
+      # Step running exclusively on Windows platforms to map wheels correctly via PyPI
+      - name: Install TensorFlow via Pip on Windows Runners
+        if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
+      #  shell: bash -l {0}
+        run: |
+          pip install "tensorflow==2.*"
           
       - uses: mamba-org/setup-micromamba@v2.0.2
         if: matrix.os != 'windows-2022' && matrix.os != 'windows-11-arm'
