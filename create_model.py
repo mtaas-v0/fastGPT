@@ -209,7 +209,7 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
     del sys.modules["gguf"]
     import gguf
             
-    g_writer = gguf.GGUFWriter("model_v2.gguf", "generic")
+    g_writer = gguf.GGUFWriter("model.gguf", "generic")
     save_gguf(g_writer, data_offset_name, data_offset)
     g_writer.close()
     
