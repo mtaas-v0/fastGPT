@@ -48,10 +48,11 @@ jobs:
       - name: Locate gfortran.exe and Set GITHUB_ENV
         shell: bash -l {0}
         run: |
-          echo "Searching for gfortran.exe inside ${CONDA_PREFIX} ..."
+          set UNIX_CONDA_PREFIX=$(cygpath -u "$CONDA_PREFIX")
+          echo "Searching for gfortran.exe inside ${UNIX_CONDA_PREFIX} ..."
           
           # Find the first instance of gfortran.exe recursively
-          GFORTRAN_PATH=$(find "${CONDA_PREFIX}" -type f -name "gfortran.exe" -print -quit)
+          GFORTRAN_PATH=$(find "${UNIX_CONDA_PREFIX}" -type f -name "gfortran.exe" -print -quit)
           
           if [ -z "$GFORTRAN_PATH" ]; then
             echo "::error::gfortran.exe was not found anywhere in the workspace directory!"
