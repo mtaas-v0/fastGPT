@@ -163,9 +163,8 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
         len(vocab_idx),len(vocab_txt.encode("utf-8")),len(byte_decoder)], dtype=np.int32)
 
     # Save the model to GGUF
-    def save_gguf(data_offset_name, data_offset_value):
+    def save_gguf(g, data_offset_name, data_offset_value):
 #        g = gguf.GGUFWriter("model.gguf", None)
-        g = gguf.GGUFWriter("model.gguf", "generic")
         g.add_int32(data_offset_name, data_offset_value)
         g.add_tensor("header", header)
         g.add_tensor("wte", wte); g.add_tensor("wpe", wpe)
@@ -187,10 +186,11 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
         g.write_header_to_file()
         g.write_kv_data_to_file()
         g.write_tensors_to_file()
-        g.close()
 
+    g_writer = gguf.GGUFWriter("model.gguf", "generic")
     data_offset_name = "general.data_offset"
-    save_gguf(data_offset_name, 0)
+    save_gguf(g_writer, data_offset_name, 0)
+    g_writer.close()
 
     g = gguf.GGUFReader("model.gguf")
     data_offset = g.tensors[0].data_offset
@@ -204,7 +204,10 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
     print("offset offset:", offset_offset)
     print("data offset:", data_offset)
 
-    save_gguf(data_offset_name, data_offset)
+    g_writer = gguf.GGUFWriter("model.gguf", "generic")
+    save_gguf(g_writer, data_offset_name, data_offset)
+    g_writer.close()
+    
 
     t2 = clock()
     print("Save time: ", t2-t1)
