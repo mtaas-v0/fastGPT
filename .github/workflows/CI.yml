@@ -106,6 +106,27 @@ jobs:
         run: |
             ci/build.sh
 
+
+      - name: Collect DLL Dependencies
+        shell: bash -el {0}
+        if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
+        run: |
+          # $CONDA_PREFIX is natively exported on environment activation
+          mkdir dist/
+          
+          DLL_SRC_DIR="$CONDA_PREFIX/Library/bin"
+          
+          echo "Conda active prefix is: $CONDA_PREFIX"
+          echo "Scanning for needed toolchain DLLs..."
+          
+          # Use objdump (packaged with m2w64-toolchain) to find import requirements
+          objdump -p dist/chat.exe | grep -i 'DLL Name:' | awk '{print $3}' | while read -r dll; do
+            if [ -f "$DLL_SRC_DIR/$dll" ]; then
+              cp "$DLL_SRC_DIR/$dll" dist/
+              echo "Successfully Bundled: $dll"
+            fi
+          done
+
       - name: Upload Build Artifacts
         uses: actions/upload-artifact@v4
         if: always()
