@@ -114,19 +114,24 @@ jobs:
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
         run: |
           # $CONDA_PREFIX is natively exported on environment activation
-          mkdir dist/
+          mkdir dist
           
           DLL_SRC_DIR="$CONDA_PREFIX/Library/bin"
           
           echo "Conda active prefix is: $CONDA_PREFIX"
           echo "Scanning for needed toolchain DLLs..."
-          objdump -p chat.exe
+          # objdump -p chat.exe
           
           # Use objdump (packaged with m2w64-toolchain) to find import requirements
           objdump -p chat.exe | grep -i 'DLL Name:' | awk '{print $3}' | while read -r dll; do
-            if [ -f "$DLL_SRC_DIR/$dll" ]; then
-              cp "$DLL_SRC_DIR/$dll" dist/
-              echo "Successfully Bundled: $dll"
+            # Finds the DLL path, strips Windows carriage returns (\r), and converts format
+            my_dll_path=$(cygpath -u "$(/c/Windows/System32/where.exe $dll | head -n 1)" | tr -d '\r')
+
+            if [ -f "$my_dll_path" ]; then
+              cp "$my_dll_path" dist/
+              echo "Successfully Bundled: $my_dll_path"
+            else
+              echo "[FAILED] MISSING DLL: $my_dll_path"
             fi
           done
 
