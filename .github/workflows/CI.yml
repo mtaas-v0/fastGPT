@@ -48,6 +48,9 @@ jobs:
       - name: Locate gfortran.exe and Set GITHUB_ENV
         shell: bash -l {0}
         run: |
+          echo CONDA_PREFIX=$CONDA_PREFIX
+          command -v cygpath 
+          cygpath -u "$CONDA_PREFIX"
           set UNIX_CONDA_PREFIX=$(cygpath -u "$CONDA_PREFIX")
           echo "Searching for gfortran.exe inside ${UNIX_CONDA_PREFIX} ..."
           
