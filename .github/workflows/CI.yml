@@ -26,7 +26,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup Micromamba
+        uses: mamba-org/setup-micromamba@v2.0.2
+        if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
+        with:
+          environment-name: tf_env
+          create-args: python=3.10 tensorflow=2.11.0
+          
       - uses: mamba-org/setup-micromamba@v2.0.2
+        if: matrix.os != 'windows-2022' && matrix.os != 'windows-11-arm'
         with:
           micromamba-version: '2.0.4-0'
           environment-file: environment.yml
