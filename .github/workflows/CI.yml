@@ -51,7 +51,7 @@ jobs:
           echo CONDA_PREFIX=$CONDA_PREFIX
           command -v cygpath 
           cygpath -u "$CONDA_PREFIX"
-          set UNIX_CONDA_PREFIX=$(cygpath -u "$CONDA_PREFIX")
+          export UNIX_CONDA_PREFIX=$(cygpath -u "$CONDA_PREFIX")
           echo "Searching for gfortran.exe inside $UNIX_CONDA_PREFIX ..."
           
           # Find the first instance of gfortran.exe recursively
