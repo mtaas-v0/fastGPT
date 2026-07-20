@@ -116,6 +116,7 @@ def load_encoder_hparams_and_params(model_size, models_dir):
 
 def convert(params, n_head, n_ctx, idx, decoder_txt,
         vocab_idx, vocab_txt, byte_decoder):
+    import gguf
     t1 = clock()
     blocks = params["blocks"]
     n_embd = blocks[0]["ln_1"]["b"].size
@@ -187,12 +188,12 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
         g.write_kv_data_to_file()
         g.write_tensors_to_file()
 
-    g_writer = gguf.GGUFWriter("model.gguf", "generic")
+    g_writer = gguf.GGUFWriter("model_v1.gguf", "generic")
     data_offset_name = "general.data_offset"
     save_gguf(g_writer, data_offset_name, 0)
     g_writer.close()
 
-    g = gguf.GGUFReader("model.gguf")
+    g = gguf.GGUFReader("model_v1.gguf")
     data_offset = g.tensors[0].data_offset
     # * .offset: the offset of the kv entry
     # * 8: The i64 length of the key string
@@ -204,6 +205,10 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
     print("offset offset:", offset_offset)
     print("data offset:", data_offset)
 
+    import sys
+    del sys.modules["gguf"]
+    import gguf
+            
     g_writer = gguf.GGUFWriter("model_v2.gguf", "generic")
     save_gguf(g_writer, data_offset_name, data_offset)
     g_writer.close()
