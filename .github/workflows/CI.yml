@@ -46,6 +46,7 @@ jobs:
 
       # Explicit step that only triggers on Windows to append variables dynamically
       - name: Locate gfortran.exe and Set GITHUB_ENV
+        if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
         shell: bash -l {0}
         run: |
           echo CONDA_PREFIX=$CONDA_PREFIX
@@ -79,7 +80,7 @@ jobs:
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
       #  shell: bash -l {0}
         run: |
-          pip install "tensorflow==2.*"
+          pip install "tensorflow==2.*" requests
           
       - uses: mamba-org/setup-micromamba@v2.0.2
         if: matrix.os != 'windows-2022' && matrix.os != 'windows-11-arm'
