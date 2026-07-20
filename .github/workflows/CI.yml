@@ -42,7 +42,7 @@ jobs:
         if: matrix.os == 'windows-2022' || matrix.os == 'windows-11-arm'
         with:
           environment-name: tf_env
-          create-args: python=3.10
+          create-args: python=3.10 m2w64-gcc-fortran
       
       # Step running exclusively on Windows platforms to map wheels correctly via PyPI
       - name: Install TensorFlow via Pip on Windows Runners
