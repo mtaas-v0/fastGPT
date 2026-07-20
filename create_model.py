@@ -164,7 +164,8 @@ def convert(params, n_head, n_ctx, idx, decoder_txt,
 
     # Save the model to GGUF
     def save_gguf(data_offset_name, data_offset_value):
-        g = gguf.GGUFWriter("model.gguf", None)
+#        g = gguf.GGUFWriter("model.gguf", None)
+        g = gguf.GGUFWriter("model.gguf", "generic")
         g.add_int32(data_offset_name, data_offset_value)
         g.add_tensor("header", header)
         g.add_tensor("wte", wte); g.add_tensor("wpe", wpe)
