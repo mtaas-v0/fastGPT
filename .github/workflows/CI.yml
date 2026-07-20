@@ -8,7 +8,18 @@ on:
     branches:
       - main
   workflow_dispatch:
-    
+    inputs:
+      os_selection:
+        description: 'Select Target Operating System Matrix'
+        type: choice
+        required: true
+        default: '["ubuntu-latest", "windows-2022", "windows-11-arm", "macos-latest"]'
+        options:
+          - '["ubuntu-latest", "windows-2022", "windows-11-arm", "macos-latest"]' # All
+          - '["ubuntu-latest"]'
+          - '["windows-2022"]'
+          - '["windows-11-arm"]'
+          - '["macos-latest"]'
 
 jobs:
 
@@ -18,8 +29,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["macos-latest", "ubuntu-latest", 
-          "windows-2022", "windows-11-arm"]
+        os: ${{ fromJSON(github.event.inputs.os_selection || '["ubuntu-latest", "windows-2022", "windows-11-arm", "macos-latest"]') }}
+
 
     steps:
       - uses: actions/checkout@v4
@@ -62,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ["macos-latest", "ubuntu-latest"]
+        os: ${{ fromJSON(github.event.inputs.os_selection || '["ubuntu-latest", "windows-2022", "windows-11-arm", "macos-latest"]') }}
 
     steps:
       - uses: actions/checkout@v3
