@@ -49,8 +49,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash -l {0}
         run: |
-          echo "FC=${CONDA_PREFIX}/bin/gfortran.exe" >> $GITHUB_ENV
-          echo "F77=${CONDA_PREFIX}/bin/gfortran.exe" >> $GITHUB_ENV
+          echo "FC=${CONDA_PREFIX}\bin\gfortran.exe" >> $GITHUB_ENV
+          echo "F77=${CONDA_PREFIX}\bin\gfortran.exe" >> $GITHUB_ENV
 
       - name: Next Workflow Task
         shell: bash -l {0}
