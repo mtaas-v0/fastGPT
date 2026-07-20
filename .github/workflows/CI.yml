@@ -69,7 +69,6 @@ jobs:
         run: |
           # Works seamlessly across both Windows and Linux now!
           $FC --version
-          exit -1
           
       # Step running exclusively on Windows platforms to map wheels correctly via PyPI
       - name: Install TensorFlow via Pip on Windows Runners
